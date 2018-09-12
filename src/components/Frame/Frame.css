@@ -1,0 +1,11 @@
+#editor:focus {
+  outline: none;
+}
+
+#editor {
+  text-align: center;
+}
+
+iframe {
+  text-align: center;
+}

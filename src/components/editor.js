@@ -1,36 +1,18 @@
 import React, { Component } from 'react';
-import CodeMirror from '@skidding/react-codemirror';
+import {Editor, EditorState} from 'draft-js';
 
-require('codemirror/lib/codemirror.css');
-require('codemirror/mode/markdown/markdown');
-require('codemirror/theme/monokai.css');
-require('codemirror/keymap/vim.js');
-
-class Editor extends Component {
+class MyEditor extends Component {
   constructor(props) {
     super(props);
-
-    this.updateCode = this.updateCode.bind(this);
-  }
-
-  updateCode(e) {
-    this.props.onChange(e);
+    this.state = {editorState: EditorState.createEmpty()};
+    this.onChange = (editorState) => this.setState({editorState});
   }
 
   render() {
-    var options = {
-      mode: 'markdown',
-      theme: 'monokai'
-    }
     return (
-      <CodeMirror
-        value={this.props.value}
-        options={options}
-        height="100%"
-        onChange = {this.updateCode}
-      />
+        <Editor editorState={this.state.editorState} onChange={this.onChange} />
     );
   }
 }
 
-export default Editor;
+export default MyEditor;

@@ -7,11 +7,12 @@
     "electron-is-dev": "^0.3.0",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
+    "react-frame-component": "^4.0.1",
     "react-markdown": "^3.6.0",
     "react-onclickoutside": "^6.7.1",
     "react-scripts": "1.1.5",
     "react-split-pane": "^0.1.84",
-    "remove-markdown": "^0.3.0",
+    "showdown": "^1.8.6",
     "wait-on": "^3.0.1"
   },
   "devDependencies": {
