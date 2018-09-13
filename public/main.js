@@ -161,9 +161,11 @@ function saveFile(data) {
         ]
       }]
     }, (filename) => {
-      setTitle(`(saved) ${filename}`);
-      fs.writeFileSync(filename, data.msg);
-      mainWindow.webContents.send('saved', {});
+      if (typeof filename !== 'undefined') {
+        setTitle(`(saved) ${filename}`);
+        fs.writeFileSync(filename, data.msg);
+        mainWindow.webContents.send('saved', {});
+      }
     });
   }
 }
