@@ -216,14 +216,16 @@ function promptSaveBeforeClosing() {
       'Don\'t Save'
     ]
   }, (response) => {
-    switch (response) {
-      case 0:
-        mainWindow.webContents.send('save', { as: !documentTitle });
-        app.quit();
-        break;
-      case 2:
-        app.quit();
-        break;
+    if (typeof response !== 'undefined') {
+      switch (response) {
+        case 0:
+          mainWindow.webContents.send('save', { as: !documentTitle });
+          app.quit();
+          break;
+        case 2:
+          app.quit();
+          break;
+      }
     }
     return;
   });
