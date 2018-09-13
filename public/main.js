@@ -14,7 +14,7 @@ function createWindow() {
     width: 900,
     height: 680,
     icon: path.join(__dirname, 'icon.png'),
-    title: '(unsaved) MarkIn',
+    title: '(unsaved) Untitled.md',
     darkTheme: true
   });
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
@@ -48,7 +48,7 @@ function createWindow() {
           label: 'Open File',
           accelerator: 'CmdOrCtrl+O',
           click() {
-            openFile();
+            openFileHandler();
           }
         },
         {role: 'separator'},
@@ -122,7 +122,11 @@ app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    if (documentTitle && documentTitle.split(' ')[0] === '(saved)') {
+      app.quit();
+    } else {
+      promptSaveBeforeClosing();
+    }
   }
 });
 
@@ -164,6 +168,70 @@ function saveFile(data) {
   }
 }
 
+function openFileHandler() {
+  /*
+   * If current document is saved, open new file.
+   * If current document is unsaved, prompt for save.
+   */
+  const file = openFile();
+  if (documentTitle && documentTitle.split(' ')[0] === '(saved)') {
+    loadNewFile(file);
+  } else {
+    promptSaveBeforeOpening(file);
+  }
+}
+
+function promptSaveBeforeOpening(file) {
+  dialog.showMessageBox(mainWindow, {
+    message: `${(documentTitle ? documentTitle.split('/')[documentTitle.split('/').length-1] : 'Untitled.md')} has changes, do you want to save them?`,
+    detail: 'Your changes will be lost if you close this item without saving.',
+    buttons: [
+      'Save',
+      'Cancel',
+      'Don\'t Save'
+    ]
+  }, (response) => {
+    switch (response) {
+      case 0:
+        mainWindow.webContents.send('save', { as: !documentTitle });
+        loadNewFile(file);
+        break;
+      case 2:
+        loadNewFile(file);
+        break;
+    }
+    return;
+  });
+}
+
+function promptSaveBeforeClosing() {
+  dialog.showMessageBox(mainWindow, {
+    message: `${(documentTitle ? documentTitle.split('/')[documentTitle.split('/').length-1] : 'Untitled.md')} has changes, do you want to save them?`,
+    detail: 'Your changes will be lost if you close this item without saving.',
+    buttons: [
+      'Save',
+      'Cancel',
+      'Don\'t Save'
+    ]
+  }, (response) => {
+    switch (response) {
+      case 0:
+        mainWindow.webContents.send('save', { as: !documentTitle });
+        app.quit();
+        break;
+      case 2:
+        app.quit();
+        break;
+    }
+    return;
+  });
+}
+
+function loadNewFile(file) {
+  setTitle(`(saved) ${file[0]}`);
+  mainWindow.webContents.send('load', { data: file[1] });
+}
+
 function openFile() {
   const files = dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
@@ -176,12 +244,10 @@ function openFile() {
       ]
     }]
   });
-
   if (!files) return;
-
   const file = files[0];
   const fileContent = fs.readFileSync(file).toString();
-  console.log(fileContent);
+  return [file, fileContent];
 }
 
 function setTitle(title) {
