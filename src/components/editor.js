@@ -32,7 +32,8 @@ export default class MyEditor extends Component {
 
     ipcRenderer.on('save', (event, data) => {
       ipcRenderer.send('save', { 
-        msg: stateToMarkdown(this.state.editorState.getCurrentContent())
+        msg: stateToMarkdown(this.state.editorState.getCurrentContent()),
+        as: data.as
       });
     });
 

@@ -56,7 +56,14 @@ function createWindow() {
           label: 'Save File',
           accelerator: 'CmdOrCtrl+S',
           click() {
-            mainWindow.webContents.send('save', {});
+            mainWindow.webContents.send('save', { as: false });
+          }
+        },
+        {
+          label: 'Save File As',
+          accelerator: 'CmdOrCtrl+Shift+S',
+          click() {
+            mainWindow.webContents.send('save', { as: true });
           }
         }
       ]
@@ -134,7 +141,7 @@ ipcMain.on('documentHasBeenChanged', (event, data) => {
 });
 
 function saveFile(data) {
-  if (documentTitle) {
+  if (documentTitle && !data.as) {
     const filename = documentTitle.replace('(saved) ', '').replace('(unsaved) ', '');
     setTitle(`(saved) ${filename}`);
     fs.writeFileSync(filename, data.msg);
