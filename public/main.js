@@ -9,7 +9,13 @@ const path = require('path');
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({ width: 900, height: 680 });
+  mainWindow = new BrowserWindow({
+    width: 900,
+    height: 680,
+    icon: path.join(__dirname, 'icon.png'),
+    title: 'MarkIn',
+    darkTheme: true
+  });
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
 
   app.setAboutPanelOptions({
