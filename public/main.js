@@ -93,22 +93,22 @@ function createWindow() {
         {role: 'zoomin'},
         {role: 'zoomout'},
         {type: 'separator'},
-        {role: 'togglefullscreen'}
       ]
     },
     {
       role: 'window',
       submenu: [
         {role: 'minimize'},
-        {role: 'close'}
+        {role: 'close'},
+        {role: 'togglefullscreen'}
       ]
     },
     {
       role: 'help',
       submenu: [
         {
-          label: 'Learn More',
-          click () { require('electron').shell.openExternal('https://electronjs.org') }
+          label: 'Documentation',
+          click () { require('electron').shell.openExternal('https://justinpchang.github.io/MarkIn') }
         }
       ]
     }
