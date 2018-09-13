@@ -5,6 +5,7 @@
   "dependencies": {
     "@skidding/react-codemirror": "^1.0.2",
     "draft-js": "^0.10.5",
+    "draft-js-export-markdown": "^1.2.0",
     "draft-js-markdown-plugin": "^3.0.4",
     "draft-js-plugins-editor": "^2.1.1",
     "electron-is-dev": "^0.3.0",
