@@ -6,7 +6,7 @@ import 'draft-js/dist/Draft.css';
 class App extends Component {
   render() {
     return (
-      <div>
+      <div id="container">
         <MyEditor />
       </div>
     );

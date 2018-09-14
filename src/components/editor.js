@@ -16,6 +16,8 @@ export default class MyEditor extends Component {
       plugins: [createMarkdownPlugin()],
       saved: false
     };
+
+    this.setDomEditorRef = ref => this.domEditor = ref;
      
     this.onChange = (editorState) => {
       if (editorState.getCurrentContent() !== this.state.editorState.getCurrentContent()) {
@@ -48,9 +50,18 @@ export default class MyEditor extends Component {
     });
   }
 
+  componentDidMount(){
+    this.domEditor.focus()
+  }
+
   render() {
     return (
-      <Editor editorState={this.state.editorState} onChange={this.onChange} plugins={this.state.plugins} />
+      <Editor 
+        editorState={this.state.editorState}
+        onChange={this.onChange}
+        plugins={this.state.plugins}
+        ref={this.setDomEditorRef}
+      />
     );
   }
 }
