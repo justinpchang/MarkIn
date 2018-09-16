@@ -6,3 +6,12 @@
 #container > * {
   height: 80vh;
 }
+
+.md-block {
+  background-color: cadetblue;
+  margin: 15px 0;
+  font-size: 16px;
+  position: relative;
+  padding-left: 4px;
+  border-left: 9px solid lightblue;
+}
