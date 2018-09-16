@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { EditorState } from 'draft-js';
+import { EditorState, ContentState, SelectionState, Modifier, ContentBlock, CharacterMetadata, genKey } from 'draft-js';
+import { List, Map, Repeat } from 'immutable';
 import Editor from 'draft-js-plugins-editor';
 import { stateToMarkdown } from 'draft-js-export-markdown';
 import { stateFromMarkdown } from 'draft-js-import-markdown';
@@ -7,7 +8,7 @@ import createMarkdownPlugin from 'draft-js-markdown-plugin';
 
 const { ipcRenderer } = window.require('electron');
 
-export default class MyEditor extends Component {
+export default class MdEditor extends Component {
   constructor(props) {
     super(props);
      
@@ -55,13 +56,21 @@ export default class MyEditor extends Component {
   }
 
   render() {
+    const { editorState } = this.state;
+    const markdownText = stateToMarkdown(ContentState.createFromBlockArray([editorState.getCurrentContent().getBlocksAsArray()[editorState.getCurrentContent().getBlockMap().keySeq().findIndex(k => k === editorState.getSelection().getStartKey())]]));
+    console.log(markdownText);
+
+    console.log('---------');
+
     return (
-      <Editor 
-        editorState={this.state.editorState}
-        onChange={this.onChange}
-        plugins={this.state.plugins}
-        ref={this.setDomEditorRef}
-      />
+      <div className="md-editor">
+        <Editor 
+          editorState={this.state.editorState}
+          onChange={this.onChange}
+          plugins={this.state.plugins}
+          ref={this.setDomEditorRef}
+        />
+      </div>
     );
   }
 }
