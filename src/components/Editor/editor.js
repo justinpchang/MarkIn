@@ -16,7 +16,9 @@ export default class MdEditor extends Component {
      
     this.state = {
       editorState: EditorState.createEmpty(),
-      plugins: [createMarkdownPlugin()],
+      markdown: [],
+      lastBlockIndex: 0,
+      //plugins: [createMarkdownPlugin()],
       saved: false
     };
 
@@ -29,6 +31,27 @@ export default class MdEditor extends Component {
       }
     }).merge(DefaultDraftBlockRenderMap);
     this.extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(this.RenderMap);
+
+    // Helper function to modify markdown state array
+    this.editMarkdown = (lineNumber, content) => {
+      const { markdown } = this.state;
+      if (lineNumber >= markdown.length) {
+        markdown.push(content);
+      } else {
+        markdown[lineNumber] = content;
+      }
+      this.setState({
+        markdown
+      });
+    }
+
+    // Helper function for retrieving markdown
+    this.markdown = (index) => {
+      if (index >= this.state.markdown.length) {
+        return '';
+      }
+      return this.state.markdown[index];
+    }
      
     this.onChange = (editorState) => {
       // Check if document needs to update save status
@@ -44,7 +67,10 @@ export default class MdEditor extends Component {
       const currentBlockIndex = editorState.getCurrentContent().getBlockMap()
         .keySeq().findIndex(k => k === currentBlockKey);
       let blocksArray = editorState.getCurrentContent().getBlocksAsArray();
-      const markdownText = stateToMarkdown(ContentState.createFromBlockArray([blocksArray[currentBlockIndex]])).replace(/\r?\n|\r/g, '');
+      const markdownText = (currentBlockIndex !== this.state.lastBlockIndex) ? this.markdown(currentBlockIndex) : blocksArray[currentBlockIndex].getText();
+      this.editMarkdown(currentBlockIndex, markdownText);
+      console.log(this.state.markdown.join('\n'));
+      console.log('md:', JSON.stringify(markdownText));
 
       // Get current cursor position on line
       const cursorText = blocksArray[currentBlockIndex].getText()
@@ -58,8 +84,6 @@ export default class MdEditor extends Component {
         characterList: new List(Repeat(CharacterMetadata.create(), markdownText.length)),
         text: markdownText
       });
-
-      console.log(JSON.stringify(markdownText));
       
       // Add new content block to blocks array
       blocksArray[currentBlockIndex] = newContentBlock;
@@ -69,8 +93,7 @@ export default class MdEditor extends Component {
         if (index === currentBlockIndex) {
           return newContentBlock;
         } else {
-          const newText = stateToMarkdown(ContentState.createFromBlockArray([block]));
-          return convertFromRaw(mdToDraftjs(newText)).getBlocksAsArray()[0];
+          return convertFromRaw(mdToDraftjs(this.markdown(index))).getBlocksAsArray()[0];
         }
       });
 
@@ -83,15 +106,16 @@ export default class MdEditor extends Component {
       // Create new selection
       const oldSelectionState = editorState.getSelection();
       const newSelectionState = SelectionState.createEmpty(newContentBlock.getKey()).merge({
-        focusOffset: oldSelectionState.focusOffset,
-        anchorOffset: oldSelectionState.anchorOffset
+        focusOffset: cursorStartOffset,//oldSelectionState.focusOffset,
+        anchorOffset: cursorEndOffset//oldSelectionState.anchorOffset
       });
 
       newEditorState = EditorState.forceSelection(newEditorState, newSelectionState);
 
       // Update editor state
       this.setState({
-        editorState: newEditorState
+        editorState: newEditorState,
+        lastBlockIndex: currentBlockIndex
       });
     }
 
