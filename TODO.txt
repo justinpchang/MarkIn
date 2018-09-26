@@ -2,5 +2,5 @@ TODO
 
 - Cursor position does not update correctly if new characters are added.
 - Cannot backspace through a line.
-- Styling for current line.
+DONE- Styling for current line.
 - Vim keys.

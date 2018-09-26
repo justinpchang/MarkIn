@@ -80,7 +80,7 @@ export default class MdEditor extends Component {
       // Create new content block
       const newContentBlock = new ContentBlock({
         key: genKey(),
-        type: 'MarkdownBlock',
+        type: 'edit-line',//'MarkdownBlock',
         characterList: new List(Repeat(CharacterMetadata.create(), markdownText.length)),
         text: markdownText
       });
@@ -152,6 +152,13 @@ export default class MdEditor extends Component {
     this.domEditor.focus()
   }
 
+  blockStyleFn(contentBlock) {
+    if (contentBlock.getType() === 'edit-line') {
+      console.log('RENDERING edit-line with text:', contentBlock.getText());
+      return 'edit-line';
+    }
+  }
+
   render() {
     const { editorState } = this.state;
 
@@ -163,6 +170,7 @@ export default class MdEditor extends Component {
           onChange={this.onChange}
           plugins={this.state.plugins}
           ref={this.setDomEditorRef}
+          blockStyleFn={this.blockStyleFn}
           //blockRenderMap={this.extendedBlockRenderMap}
           //blockRenderer={this.blockRendererFn}
         />
