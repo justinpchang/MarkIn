@@ -106,8 +106,8 @@ export default class MdEditor extends Component {
       // Create new selection
       const oldSelectionState = editorState.getSelection();
       const newSelectionState = SelectionState.createEmpty(newContentBlock.getKey()).merge({
-        focusOffset: cursorStartOffset,//oldSelectionState.focusOffset,
-        anchorOffset: cursorEndOffset//oldSelectionState.anchorOffset
+        focusOffset: oldSelectionState.focusOffset,
+        anchorOffset: oldSelectionState.anchorOffset
       });
 
       newEditorState = EditorState.forceSelection(newEditorState, newSelectionState);
